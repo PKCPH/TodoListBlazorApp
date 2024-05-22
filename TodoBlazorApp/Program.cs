@@ -8,6 +8,9 @@ using TodoBlazorApp.Handlers;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Force application to run on Kestrel to ignore Windows SSL Authentication
+builder.WebHost.UseKestrel();
+
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
@@ -52,6 +55,14 @@ builder.Services.AddAuthorization(options =>
         policy.RequireRole("ADMIN");
     });
 });
+
+string userFolder = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+string filePath = Path.Combine(userFolder, ".aspnet", "https", "BlazerToDoCert.pfx");
+
+string? password = builder.Configuration.GetValue<string>("KestrelCertPassword");
+
+builder.Configuration.GetSection("Kestrel:Endpoints:Https:Certificate:Path").Value = filePath;
+builder.Configuration.GetSection("Kestrel:Endpoints:Https:Certificate:Password").Value = password;
 
 var app = builder.Build();
 

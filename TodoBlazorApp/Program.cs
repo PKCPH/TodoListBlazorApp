@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using TodoBlazorApp.Components;
 using TodoBlazorApp.Components.Account;
 using TodoBlazorApp.Data;
+using TodoBlazorApp.Handlers;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,6 +16,8 @@ builder.Services.AddCascadingAuthenticationState();
 builder.Services.AddScoped<IdentityUserAccessor>();
 builder.Services.AddScoped<IdentityRedirectManager>();
 builder.Services.AddScoped<AuthenticationStateProvider, IdentityRevalidatingAuthenticationStateProvider>();
+builder.Services.AddSingleton<RoleHandler>();
+builder.Services.AddSingleton<HashingHandler>();
 
 builder.Services.AddAuthentication(options =>
     {
@@ -29,11 +32,26 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 builder.Services.AddIdentityCore<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
+    .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddSignInManager()
     .AddDefaultTokenProviders();
 
 builder.Services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSender>();
+
+//added auth
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("AuthenticatedUser", policy =>
+    {
+        policy.RequireAuthenticatedUser();
+    });
+    //Admin Authorization
+    options.AddPolicy("RequireAdmin", policy =>
+    {
+        policy.RequireRole("ADMIN");
+    });
+});
 
 var app = builder.Build();
 

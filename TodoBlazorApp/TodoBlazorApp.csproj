@@ -17,4 +17,8 @@
     <PackageReference Include="SkiaSharp.QrCode" Version="0.7.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Data\Models\" />
+  </ItemGroup>
+
 </Project>

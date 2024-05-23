@@ -11,7 +11,8 @@ public class TodoDbContext : DbContext
     {
     }
 
+    #region DBSets
     public virtual DbSet<User> Users { get; set; }
-    public virtual DbSet<TodoList> TodoLists { get; set; }
-
+    public virtual DbSet<Todo> Todos { get; set; }
+    #endregion
 }

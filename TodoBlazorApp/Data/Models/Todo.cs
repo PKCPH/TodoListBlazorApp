@@ -2,8 +2,8 @@
 using System.ComponentModel.DataAnnotations.Schema;
 namespace TodoBlazorApp.Data.Models;
 
-[Table("TodoList")]
-public partial class TodoList
+[Table("todos")]
+public partial class Todo
 {
     public int Id { get; set; }
     public int UserId { get; set; }

@@ -7,8 +7,10 @@ namespace TodoBlazorApp.Data.Models;
 public partial class User
 {
     public int Id { get; set; }
+
     [StringLength(500)]
     public string Name { get; set; }
+    
     [StringLength(500)]
     public string SocialSecurityNumber { get; set; }
 

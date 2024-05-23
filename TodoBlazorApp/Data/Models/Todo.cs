@@ -7,6 +7,7 @@ public partial class Todo
 {
     public int Id { get; set; }
     public int UserId { get; set; }
+
     [StringLength(500)]
     public string Item { get; set; } = null!;
 

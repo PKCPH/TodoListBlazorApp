@@ -100,6 +100,9 @@ else
 
     private void btnSubmitCpr_clicked()
     {
+        // Hash SSN
+        string hashedSSN = _hashingHandler.CompleteHashing(_sSNUserInput);
+
         // Fetch user
         var matchedUser = _toDoContext.Users.FirstOrDefault(x => x.Name == _userName);
 
@@ -109,7 +112,7 @@ else
             var user = new TodoBlazorApp.Data.Models.User
                 {
                     Name = _userName,
-                    SocialSecurityNumber = _sSNUserInput
+                    SocialSecurityNumber = hashedSSN
                 };
 
             // Add User to DB
@@ -126,7 +129,7 @@ else
         else
         {
             // Check if User Input matches with User from DB
-            bool valueMatch = _sSNUserInput == matchedUser.SocialSecurityNumber;
+            bool valueMatch = _hashingHandler.CompleteHashingVerify(_sSNUserInput, matchedUser.SocialSecurityNumber);
             if (valueMatch)
             {
                 // Fetch Todos from DB

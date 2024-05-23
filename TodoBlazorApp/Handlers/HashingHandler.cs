@@ -35,4 +35,20 @@ public class HashingHandler
         return BCrypt.Net.BCrypt.Verify(txtToHash, hashedValueAsString, true, HashType.SHA256);
     }
 
+    public string CompleteHashing(string txtToHash)
+    {
+        var SHA2HashedString = this.SHA2Hashing(txtToHash);
+
+        var BCryptHashedString =  this.BCryptHashing(SHA2HashedString);
+
+        return BCryptHashedString;
+    }
+
+    public bool CompleteHashingVerify(string txtToHash, string hashedValueAsString)
+    {
+        var SHA2HashedString = this.SHA2Hashing(txtToHash);
+
+        return BCrypt.Net.BCrypt.Verify(SHA2HashedString, hashedValueAsString, true, HashType.SHA256);
+    }
+
 }

@@ -28,17 +28,21 @@
         <button class="btn-primary" @onclick="btnSubmitSSN_clicked" style="width:150px;height:45px;margin:10px;">Submit</button>
         @if (_message != null)
         {
-            <div>@_message</div>
+            <div style="margin:10px;color:red;font-weight:bold;font-size:16px;">@_message</div>
         }
     </div>
 }
 else
 {
-    <div class="col-md-2" style="margin:0 auto;padding-left:20px;">
-        <div style="font-weight:bold;margin-top:20px;">Indtast to-do item:</div>
-        <input type="text" @bind="ToDoItem" style="width:150px;" />
+    <div class="col-md-2" style="margin:0 auto;padding-left:20px; width:400px; text-align: center">
+        <div style="font-weight:bold;margin-top:20px;">Input ToDo Item:</div>
+        <input type="text" @bind="ToDoItem" style="width:150px;margin:10px;" />
         <br />
-        <button class="btn-primary" @onclick="btnSubmitTodoItem_clicked" style="width:150px;height:45px;margin-top:4px;">Submit</button>
+        <button class="btn-primary" @onclick="btnSubmitTodoItem_clicked" style="width:150px;height:45px;margin:10px;">Submit</button>
+        @if (_message != null)
+        {
+            <div style="margin:10px;color:red;font-weight:bold;font-size:16px;">@_message</div>
+        }
     </div>
 }
 <div style="margin-top:18px;">
@@ -92,15 +96,33 @@ else
         // Get current user
         var user = authState.User;
 
-        // Checks if user is ADMIN
-        _isAdmin = user.IsInRole("ADMIN");
+        if (user.Identity != null)
+        {
+            // Checks if user is ADMIN
+            _isAdmin = user.IsInRole("ADMIN");
 
-        // Set username
-        _userName = user.Identity.Name;
+            // Set username
+            _userName = user.Identity.Name;
+        }
+        else
+        {
+            _message = "Error fetching user login.";
+        }
     }
 
     private void btnSubmitSSN_clicked()
     {
+        // Null check
+        if (_userName == null)
+            return;
+
+        // User input null check
+        if (_sSNUserInput == null)
+        {
+            _message = "Please fill the input field before submitting!";
+            return;
+        }
+
         // Hash SSN
         string hashedSSN = _hashingHandler.CompleteHashing(_sSNUserInput);
 
@@ -151,13 +173,24 @@ else
 
     private void btnSubmitTodoItem_clicked()
     {
-        // Fetch user id from database
-        var UserId = _toDoContext.Users.FirstOrDefault(x => x.Name == _userName).Id;
+        // User input null check
+        if (ToDoItem == null)
+        {
+            _message = "Please fill the input field before submitting!";
+            return;
+        }
+
+        // Fetch user from database
+        var User = _toDoContext.Users.FirstOrDefault(x => x.Name == _userName);
+
+        // Null check
+        if (User == null)
+            return;
 
         // Create todo from userinput
         var todo = new TodoBlazorApp.Data.Models.Todo
             {
-                UserId = UserId,
+                UserId = User.Id,
                 Item = _encryptionHandler.AsymmetricEncryption(ToDoItem)
             };
 
@@ -168,7 +201,7 @@ else
         _toDoContext.SaveChanges();
 
         // Refetch Todos from DB
-        TodoObjList = _toDoContext.Todos.Where(x => x.UserId == UserId).ToList();
+        TodoObjList = _toDoContext.Todos.Where(x => x.UserId == User.Id).ToList();
     }
 
     private void ClearItems()
@@ -176,17 +209,21 @@ else
         // Verity that user is admin
         if (_isAdmin)
         {
-            // Fetch user id from database
-            var UserId = _toDoContext.Users.FirstOrDefault(x => x.Name == _userName).Id;
+            // Fetch user from database
+            var User = _toDoContext.Users.FirstOrDefault(x => x.Name == _userName);
+
+            // Null check
+            if (User == null)
+                return;
 
             // Fetch todo items from user and delete them one by one and then save the changes to the DB
-            var items = _toDoContext.Todos.Where(a => a.UserId == UserId).ToList();
+            var items = _toDoContext.Todos.Where(a => a.UserId == User.Id).ToList();
             foreach (var item in items)
                 _toDoContext.Todos.Remove(item);
             _toDoContext.SaveChanges();
 
             // Refetch Todo Items
-            TodoObjList = _toDoContext.Todos.Where(x => x.UserId == UserId).ToList();
+            TodoObjList = _toDoContext.Todos.Where(x => x.UserId == User.Id).ToList();
         }
     }
 }

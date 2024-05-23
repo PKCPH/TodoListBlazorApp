@@ -42,7 +42,7 @@ else
     </div>
 }
 <div style="margin-top:18px;">
-    @if (TodoObj != null && TodoObj.Count > 0)
+    @if (TodoObjList != null && TodoObjList.Count > 0)
     {
         <table class="table">
             <thead>
@@ -51,9 +51,9 @@ else
                 </tr>
             </thead>
             <tbody>
-                @if (TodoObj != null && TodoObj.Count > 0)
+                @if (TodoObjList != null && TodoObjList.Count > 0)
                 {
-                    @foreach (var item in TodoObj)
+                    @foreach (var item in TodoObjList)
                     {
                         <tr>
                             <td>@_encryptionHandler.AsymmetricDecryption(@item.Item)</td>
@@ -80,11 +80,11 @@ else
     private string? _message { get; set; }
 
     private string? ToDoItem { get; set; }
-    private List<TodoBlazorApp.Data.Models.Todo>? TodoObj { get; set; }
+    private List<TodoBlazorApp.Data.Models.Todo>? TodoObjList { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
-        TodoObj = new List<TodoBlazorApp.Data.Models.Todo>();
+        TodoObjList = new List<TodoBlazorApp.Data.Models.Todo>();
 
         // Get Authentication State
         var authState = await _authenticationStateProvider.GetAuthenticationStateAsync();
@@ -134,7 +134,7 @@ else
             if (valueMatch)
             {
                 // Fetch Todos from DB
-                TodoObj = _toDoContext.Todos.Where(x => x.UserId == matchedUser.Id).ToList();
+                TodoObjList = _toDoContext.Todos.Where(x => x.UserId == matchedUser.Id).ToList();
                 // Fetch User's SSN from DB
                 _socialSecurityNumber = _toDoContext.Users.FirstOrDefault(x => x.Name == _userName)?.SocialSecurityNumber;
 
@@ -168,7 +168,7 @@ else
         _toDoContext.SaveChanges();
 
         // Refetch Todos from DB
-        TodoObj = _toDoContext.Todos.Where(x => x.UserId == UserId).ToList();
+        TodoObjList = _toDoContext.Todos.Where(x => x.UserId == UserId).ToList();
     }
 
     private void ClearItems()
@@ -186,7 +186,7 @@ else
             _toDoContext.SaveChanges();
 
             // Refetch Todo Items
-            TodoObj = _toDoContext.Todos.Where(x => x.UserId == UserId).ToList();
+            TodoObjList = _toDoContext.Todos.Where(x => x.UserId == UserId).ToList();
         }
     }
 }

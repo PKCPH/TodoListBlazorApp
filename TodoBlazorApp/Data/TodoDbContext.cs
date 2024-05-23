@@ -1,7 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using System.Runtime.ConstrainedExecution;
 using TodoBlazorApp.Data.Models;
-using System.Collections.Generic;
 
 namespace TodoBlazorApp.Data;
 

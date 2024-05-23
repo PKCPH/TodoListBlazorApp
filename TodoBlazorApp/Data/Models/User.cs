@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace TodoBlazorApp.Data.Models;
 
-[Table("User'")]
+[Table("users")]
 public partial class User
 {
     public int Id { get; set; }
@@ -12,5 +12,5 @@ public partial class User
     [StringLength(500)]
     public string SocialSecurityNumber { get; set; }
 
-    public virtual ICollection<TodoList> TodoLists { get; set; } = new List<TodoList>();
+    public virtual ICollection<Todo> Todos { get; set; } = new List<Todo>();
 }

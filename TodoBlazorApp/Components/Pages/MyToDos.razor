@@ -4,14 +4,15 @@
 
 @attribute [Microsoft.AspNetCore.Authorization.Authorize(Policy = "AuthenticatedUser")]
 
+
 @inject AuthenticationStateProvider _authenticationStateProvider;
 @inject IServiceProvider _serviceProvider;
 @inject Handlers.RoleHandler _roleHandler;
-
-@inject AuthenticationStateProvider _authenticationStateProvider;
-@inject Data.TodoDbContext _toDoContext;
 @inject Handlers.HashingHandler _hashingHandler;
-@inject IServiceProvider _serviceProvider;
+@inject Handlers.EncryptionHandler _encryptionHandler;
+@inject Data.TodoDbContext _toDoContext;
+
+
 
 <PageTitle>My Todos</PageTitle>
 
@@ -24,7 +25,7 @@
         <div style="font-weight:bold;">Please input your social security number: </div>
         <input type="text" @bind="_sSNUserInput" style="width:150px;margin:10px;" />
         <br />
-        <button class="btn-primary" @onclick="btnSubmitCpr_clicked" style="width:150px;height:45px;margin:10px;">Submit</button>
+        <button class="btn-primary" @onclick="btnSubmitSSN_clicked" style="width:150px;height:45px;margin:10px;">Submit</button>
         @if (_message != null)
         {
             <div>@_message</div>
@@ -55,7 +56,7 @@ else
                     @foreach (var item in TodoObj)
                     {
                         <tr>
-                            <td>@item.Item</td>
+                            <td>@_encryptionHandler.AsymmetricDecryption(@item.Item)</td>
                         </tr>
                     }
                 }
@@ -98,7 +99,7 @@ else
         _userName = user.Identity.Name;
     }
 
-    private void btnSubmitCpr_clicked()
+    private void btnSubmitSSN_clicked()
     {
         // Hash SSN
         string hashedSSN = _hashingHandler.CompleteHashing(_sSNUserInput);
@@ -157,7 +158,7 @@ else
         var todo = new TodoBlazorApp.Data.Models.Todo
             {
                 UserId = UserId,
-                Item = ToDoItem
+                Item = _encryptionHandler.AsymmetricEncryption(ToDoItem)
             };
 
         // Add todo to DB

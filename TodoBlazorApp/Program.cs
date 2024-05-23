@@ -8,7 +8,7 @@ using TodoBlazorApp.Handlers;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Force application to run on Kestrel to ignore Windows SSL Authentication
+// Force application to run on Kestrel to ignore Windows SSL Authentication 
 builder.WebHost.UseKestrel();
 
 // Add services to the container.

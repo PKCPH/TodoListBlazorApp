@@ -20,15 +20,8 @@ public class EncryptionHandler
         RSACryptoServiceProvider rsa = new RSACryptoServiceProvider();
         _privateKey = rsa.ToXmlString(true);
         _publicKey = rsa.ToXmlString(false);
-    }
 
-    public string SymmetricEncryption(string txtToEncrypt)
-    {
-        return _dataProtector.Protect(txtToEncrypt);
-    }
-    public string SymmetricDecryption(string txtToEncrypt)
-    {
-        return _dataProtector.Unprotect(txtToEncrypt);
+
     }
 
     public static string AsymmetricEncryption(string textToEncrypt, string publicKey)
